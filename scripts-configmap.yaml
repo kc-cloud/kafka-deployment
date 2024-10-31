@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: release-name-kafka-scripts
-  namespace: "default"
+  name: message-broker-kafka-scripts
+  namespace: nexus-deva
   labels:
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: message-broker
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/version: 3.8.0
-    helm.sh/chart: kafka-30.1.4
+    app.kubernetes.io/version: 3.8.1
+    helm.sh/chart: kafka-30.1.8
 data:
   kafka-init.sh: |-
     #!/bin/bash
@@ -152,7 +152,7 @@ data:
         ID=$((POD_ID + KAFKA_MIN_ID))
         kafka_conf_set "$KAFKA_CONFIG_FILE" "node.id" "$ID"
     fi
-    replace_placeholder "advertised-address-placeholder" "${MY_POD_NAME}.release-name-kafka-${POD_ROLE}-headless.default.svc.cluster.local"
+    replace_placeholder "advertised-address-placeholder" "${MY_POD_NAME}.message-broker-kafka-${POD_ROLE}-headless.nexus-deva.svc.cluster.local"
     if [[ "${EXTERNAL_ACCESS_ENABLED:-false}" =~ ^(yes|true)$ ]]; then
       configure_external_access
     fi

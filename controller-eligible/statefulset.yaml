@@ -3,14 +3,14 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: release-name-kafka-controller
-  namespace: "default"
+  name: message-broker-kafka-controller
+  namespace: nexus-deva
   labels:
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: message-broker
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/version: 3.8.0
-    helm.sh/chart: kafka-30.1.4
+    app.kubernetes.io/version: 3.8.1
+    helm.sh/chart: kafka-30.1.8
     app.kubernetes.io/component: controller-eligible
     app.kubernetes.io/part-of: kafka
 spec:
@@ -18,26 +18,26 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/instance: message-broker
       app.kubernetes.io/name: kafka
       app.kubernetes.io/component: controller-eligible
       app.kubernetes.io/part-of: kafka
-  serviceName: release-name-kafka-controller-headless
+  serviceName: message-broker-kafka-controller-headless
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/instance: message-broker
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: kafka
-        app.kubernetes.io/version: 3.8.0
-        helm.sh/chart: kafka-30.1.4
+        app.kubernetes.io/version: 3.8.1
+        helm.sh/chart: kafka-30.1.8
         app.kubernetes.io/component: controller-eligible
         app.kubernetes.io/part-of: kafka
       annotations:
-        checksum/configuration: 3f50442f6258d3328c539d47ea66e1f4c42796b9d64828059a04b7e19ac80676
-        checksum/passwords-secret: cab113c20f30ce4e9e7de53822a19ff50deb16f758d0b8df6bb53b1dbde1439f
+        checksum/configuration: dba2b2f2ca861f6ac0a202785f11b420386ef1a955300188f6f3efde8fc4748e
+        checksum/passwords-secret: b41eee32f3f36c8e0eb597a490806d87a9d8bc589ed2c60f527503c785877691
     spec:
       
       automountServiceAccountToken: false
@@ -51,7 +51,7 @@ spec:
             - podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app.kubernetes.io/instance: release-name
+                    app.kubernetes.io/instance: message-broker
                     app.kubernetes.io/name: kafka
                     app.kubernetes.io/component: controller-eligible
                 topologyKey: kubernetes.io/hostname
@@ -65,11 +65,11 @@ spec:
           type: RuntimeDefault
         supplementalGroups: []
         sysctls: []
-      serviceAccountName: release-name-kafka
+      serviceAccountName: message-broker-kafka
       enableServiceLinks: true
       initContainers:
         - name: kafka-init
-          image: docker.io/bitnami/kafka:3.8.0-debian-12-r5
+          image: docker.io/bitnami/kafka:3.8.1-debian-12-r0
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -106,21 +106,21 @@ spec:
             - name: KAFKA_CLIENT_PASSWORDS
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-user-passwords
+                  name: message-broker-kafka-user-passwords
                   key: client-passwords
             - name: KAFKA_INTER_BROKER_USER
               value: "inter_broker_user"
             - name: KAFKA_INTER_BROKER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-user-passwords
+                  name: message-broker-kafka-user-passwords
                   key: inter-broker-password
             - name: KAFKA_CONTROLLER_USER
               value: "controller_user"
             - name: KAFKA_CONTROLLER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-user-passwords
+                  name: message-broker-kafka-user-passwords
                   key: controller-password
           volumeMounts:
             - name: data
@@ -137,7 +137,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: kafka
-          image: docker.io/bitnami/kafka:3.8.0-debian-12-r5
+          image: docker.io/bitnami/kafka:3.8.1-debian-12-r0
           imagePullPolicy: "IfNotPresent"
           securityContext:
             allowPrivilegeEscalation: false
@@ -157,7 +157,7 @@ spec:
             - name: KAFKA_KRAFT_CLUSTER_ID
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-kraft-cluster-id
+                  name: message-broker-kafka-kraft-cluster-id
                   key: kraft-cluster-id
             - name: KAFKA_KRAFT_BOOTSTRAP_SCRAM_USERS
               value: "true"
@@ -166,21 +166,21 @@ spec:
             - name: KAFKA_CLIENT_PASSWORDS
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-user-passwords
+                  name: message-broker-kafka-user-passwords
                   key: client-passwords
             - name: KAFKA_INTER_BROKER_USER
               value: "inter_broker_user"
             - name: KAFKA_INTER_BROKER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-user-passwords
+                  name: message-broker-kafka-user-passwords
                   key: inter-broker-password
             - name: KAFKA_CONTROLLER_USER
               value: "controller_user"
             - name: KAFKA_CONTROLLER_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kafka-user-passwords
+                  name: message-broker-kafka-user-passwords
                   key: controller-password
           ports:
             - name: controller
@@ -230,7 +230,7 @@ spec:
       volumes:
         - name: kafka-configmaps
           configMap:
-            name: release-name-kafka-controller-configuration
+            name: message-broker-kafka-controller-configuration
         - name: kafka-secret-config
           emptyDir: {}
         - name: kafka-config
@@ -239,7 +239,7 @@ spec:
           emptyDir: {}
         - name: scripts
           configMap:
-            name: release-name-kafka-scripts
+            name: message-broker-kafka-scripts
             defaultMode: 493
         - name: logs
           emptyDir: {}
