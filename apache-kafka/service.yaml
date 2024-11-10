@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-kafka
+  namespace: message-broker
+  labels:
+    app: apache-kafka
+spec:
+  selector:
+    app: apache-kafka
+  ports:
+    - protocol: TCP
+      port: 9092
+      targetPort: 9092
